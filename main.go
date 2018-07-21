@@ -72,10 +72,19 @@ func nameHandler(w http.ResponseWriter, r *http.Request) {
 func nameageHandler(w http.ResponseWriter, r *http.Request) {
 	address, port := consulClient.GetBaseURL("age-generator")
 	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s:%d/age", address, port), nil)
-	result, _ := netClient.Do(req)
+	if err != nil {
+		fmt.Printf("Creating request error: %s", err.Error())
+	}
+	result, err := netClient.Do(req)
+	if err != nil {
+		fmt.Printf("Do request error: %s", err.Error())
+	}
 
 	var actual Age
-	bodyBytes, _ := ioutil.ReadAll(result.Body)
+	bodyBytes, err := ioutil.ReadAll(result.Body)
+	if err != nil {
+		fmt.Printf("Read body error: %s", err.Error())
+	}
 	json.Unmarshal(bodyBytes, &actual)
 
 	data := NameAge{

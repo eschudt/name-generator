@@ -2,10 +2,12 @@ package client
 
 import (
 	"encoding/json"
-	"github.com/hashicorp/consul/api"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"github.com/hashicorp/consul/api"
 )
 
 type ConsulClient struct {
@@ -42,6 +44,7 @@ func (cc *ConsulClient) GetBaseURL(serviceName string) (url string, port int) {
 	defer resp.Body.Close()
 	var out []*api.ServiceEntry
 	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	fmt.Print(string(bodyBytes))
 
 	err = json.Unmarshal(bodyBytes, &out)
 	if err != nil {
