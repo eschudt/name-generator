@@ -38,13 +38,14 @@ var (
 
 func main() {
 	url := os.Getenv("CONSUL_HTTP_ADDR")
+	listenPort := os.Getenv("NOMAD_PORT_http")
 	consulClient = client.NewConsulClient(url, "")
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", helloHandler)
 	mux.HandleFunc("/name", nameHandler)
 	mux.HandleFunc("/nameage", nameageHandler)
-	http.ListenAndServe(":8080", mux)
+	http.ListenAndServe(":"+listenPort8080, mux)
 }
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
