@@ -45,7 +45,7 @@ func main() {
 	mux.HandleFunc("/", helloHandler)
 	mux.HandleFunc("/name", nameHandler)
 	mux.HandleFunc("/nameage", nameageHandler)
-	http.ListenAndServe(":"+listenPort8080, mux)
+	http.ListenAndServe(":"+listenPort, mux)
 }
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
