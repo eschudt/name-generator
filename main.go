@@ -1,9 +1,9 @@
 package main
 
 import (
-	"./client"
 	"encoding/json"
 	"fmt"
+	"github.com/eschudt/name-generator/client"
 	"io/ioutil"
 	"net/http"
 	"time"
