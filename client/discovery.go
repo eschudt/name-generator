@@ -31,7 +31,7 @@ func NewConsulClient(baseURL, port, token string) *ConsulClient {
 
 func (cc *ConsulClient) GetBaseURL(serviceName string) (url string, port int) {
 
-	req, err := http.NewRequest("GET", cc.BaseURL+"/v1/health/service/"+serviceName+"?passing=true", nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s:%s/v1/health/service/%s?passing=true", cc.BaseURL, cc.Port, serviceName), nil)
 	if err != nil {
 		return "", 0
 	}
@@ -52,7 +52,7 @@ func (cc *ConsulClient) GetBaseURL(serviceName string) (url string, port int) {
 	}
 
 	for _, v := range out {
-		return v.Node.Address, v.Service.Port
+		return "http://" + v.Node.Address, v.Service.Port
 	}
 
 	return "", 0
