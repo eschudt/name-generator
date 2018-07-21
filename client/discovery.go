@@ -2,6 +2,7 @@ package client
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -29,16 +30,16 @@ func NewConsulClient(baseURL, port, token string) *ConsulClient {
 	return &cc
 }
 
-func (cc *ConsulClient) GetBaseURL(serviceName string) (url string, port int) {
+func (cc *ConsulClient) GetBaseURL(serviceName string) (string, int, error) {
 
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s:%s/v1/health/service/%s?passing=true", cc.BaseURL, cc.Port, serviceName), nil)
 	if err != nil {
-		return "", 0
+		return "", 0, err
 	}
 
 	resp, err := cc.Client.Do(req)
 	if err != nil {
-		return "", 0
+		return "", 0, err
 	}
 
 	defer resp.Body.Close()
@@ -48,12 +49,12 @@ func (cc *ConsulClient) GetBaseURL(serviceName string) (url string, port int) {
 
 	err = json.Unmarshal(bodyBytes, &out)
 	if err != nil {
-		return "", 0
+		return "", 0, err
 	}
 
 	for _, v := range out {
-		return "http://" + v.Node.Address, v.Service.Port
+		return "http://" + v.Node.Address, v.Service.Port, nil
 	}
 
-	return "", 0
+	return "", 0, errors.New("Couldn't find the service")
 }

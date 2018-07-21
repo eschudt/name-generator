@@ -70,9 +70,10 @@ func nameHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func nameageHandler(w http.ResponseWriter, r *http.Request) {
-	address, port := consulClient.GetBaseURL("age-generator")
-	if address == "" || port == 0 {
-		w.WriteHeader(http.StatusOK)
+	address, port, err := consulClient.GetBaseURL("age-generator")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 	} else {
 		req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s:%d/age", address, port), nil)
 		if err != nil {
