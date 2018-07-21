@@ -51,7 +51,11 @@ func (cc *ConsulClient) GetBaseURL(serviceName string) (string, int, error) {
 	}
 
 	for _, v := range out {
-		return "http://" + v.Node.Address, v.Service.Port, nil
+		address := v.Service.Address
+		if address == "::1" {
+			address = "127.0.0.1"
+		}
+		return "http://" + address, v.Service.Port, nil
 	}
 
 	return "", 0, errors.New("Couldn't find the service")
