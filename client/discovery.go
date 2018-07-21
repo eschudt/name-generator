@@ -12,16 +12,14 @@ import (
 )
 
 type ConsulClient struct {
-	BaseURL string
-	Port    string
-	Token   string
-	Client  *http.Client
+	URL    string
+	Token  string
+	Client *http.Client
 }
 
-func NewConsulClient(baseURL, port, token string) *ConsulClient {
+func NewConsulClient(baseURL, token string) *ConsulClient {
 	cc := ConsulClient{
 		baseURL,
-		port,
 		token,
 		&http.Client{
 			Timeout: time.Second * 10,
@@ -32,7 +30,7 @@ func NewConsulClient(baseURL, port, token string) *ConsulClient {
 
 func (cc *ConsulClient) GetBaseURL(serviceName string) (string, int, error) {
 
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s:%s/v1/health/service/%s?passing=true", cc.BaseURL, cc.Port, serviceName), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/v1/health/service/%s?passing=true", cc.URL, serviceName), nil)
 	if err != nil {
 		return "", 0, err
 	}

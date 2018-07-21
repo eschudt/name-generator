@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/eschudt/name-generator/client"
@@ -32,14 +33,13 @@ var (
 	netClient = &http.Client{
 		Timeout: time.Second * 10,
 	}
-	consulClient = client.NewConsulClient("http://127.0.0.1", "8500", "")
+	consulClient *client.ConsulClient
 )
 
-func init() {
-
-}
-
 func main() {
+	url := os.Getenv("CONSUL_HTTP_ADDR")
+	consulClient = client.NewConsulClient(url, "")
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", helloHandler)
 	mux.HandleFunc("/name", nameHandler)
