@@ -7,8 +7,6 @@ pipeline {
                 sh 'pwd'
                 sh 'ls -l'
                 sh 'apk update && apk add --no-cache git make'
-                sh 'wget https://raw.githubusercontent.com/golang/dep/master/install.sh'
-                sh 'chmod 777 install.sh'
                 sh './install.sh'
                 sh 'mkdir -p /go/src/github.com/eschudt/name-generator'
                 sh 'cp -r * /go/src/github.com/eschudt/name-generator/'
