@@ -6,6 +6,7 @@ pipeline {
                 sh 'go version'
                 sh 'ls -l'
                 sh 'apk update && apk add --no-cache git make'
+                sh 'dep ensure'
             }
         }
         stage('Test') {
