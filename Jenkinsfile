@@ -10,7 +10,8 @@ pipeline {
                 sh './install.sh'
                 sh 'mkdir -p /go/src/github.com/eschudt/name-generator'
                 sh 'cp -r * /go/src/github.com/eschudt/name-generator/'
-                dir /go/src/github.com/eschudt/name-generator/
+            }
+            dir ('/go/src/github.com/eschudt/name-generator/') {
                 sh 'pwd'
                 sh 'ls -l'
                 sh 'dep ensure'
