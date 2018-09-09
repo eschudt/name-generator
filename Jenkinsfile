@@ -4,8 +4,13 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'go version'
+                sh 'pwd'
                 sh 'ls -l'
                 sh 'apk update && apk add --no-cache git make'
+                sh 'curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh'
+                sh 'mkdir /go/src/github.com/eschudt/name-generator'
+                sh 'cp -r * /go/src/github.com/eschudt/name-generator/'
+                sh 'cd /go/src/github.com/eschudt/name-generator/'
                 sh 'dep ensure'
             }
         }
