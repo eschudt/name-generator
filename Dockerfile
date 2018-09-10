@@ -6,8 +6,8 @@ ARG APP_VERSION
 ARG GITHASH
 ARG BUILDSTAMP
 
-WORKDIR /go/src/github.com/eschudt/${PROJECT}
-COPY . /go/src/github.com/eschudt/${PROJECT}/
+WORKDIR /go/src/github.com/eschudt/name-generator
+COPY . /go/src/github.com/eschudt/name-generator
 
 RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh && make build-local
 
