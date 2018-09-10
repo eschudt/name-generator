@@ -6,10 +6,7 @@ node {
     }
 
     stage('Test and Build image') {
-        sh 'export GOPATH=/go'
-        sh 'echo $GOPATH'
-        sh 'echo $GOBIN'
-        sh 'export GOBIN=$GOPATH/bin'
+        sh 'mkdir /root/go/bin'
         sh 'curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh'
         sh 'dep ensure'
         sh 'make test'
