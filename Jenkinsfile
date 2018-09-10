@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'apk update && apk add --no-cache git make curl docker'
+                sh 'apk update && apk add --no-cache git make curl docker openrc'
                 sh 'curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh'
                 sh 'mkdir -p /go/src/github.com/eschudt/name-generator'
                 sh 'cp -r * /go/src/github.com/eschudt/name-generator/'
