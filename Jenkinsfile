@@ -1,54 +1,34 @@
-pipeline {
-    agent { docker { image 'golang:1.10-alpine' } }
-    stages {
-        stage('Build') {
-            steps {
-                sh 'apk update && apk add --no-cache git make curl docker openrc'
-                sh 'curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh'
-                sh 'mkdir -p /go/src/github.com/eschudt/name-generator'
-                sh 'cp -r * /go/src/github.com/eschudt/name-generator/'
-                sh 'export GOPATH=/go'
-                sh 'cd /go/src/github.com/eschudt/name-generator/ && dep ensure'
-                sh 'rc-service docker start'
-            }
-        }
-        stage('Test and Push') {
-            steps {
-                sh 'cd /go/src/github.com/eschudt/name-generator/ && make test && make build'
-                sh 'docker push eschudt/name-generator'
-            }
-        }
-        stage('Deploy - Dev') {
-            steps {
-                echo 'Deployed to Dev'
-            }
-        }
-        stage('Sanity check') {
-            steps {
-                input "Deploy to production?"
-            }
-        }
-        stage('Deploy - Production') {
-            steps {
-                echo 'Deployed to Prod'
-            }
+node {
+    def app
+
+    stage('Clone repository') {
+        checkout scm
+    }
+
+    stage('Test and Build image') {
+        sh 'dep ensure'
+        sh 'make test'
+        app = docker.build("eschudt/name-generator")
+    }
+
+    stage('Integration Test') {
+        app.inside {
+            sh 'echo "Tests passed"'
         }
     }
-    post {
-        always {
-            echo 'Job finished'
+
+    stage('Push image') {
+        /* Finally, we'll push the image with two tags:
+         * First, the incremental build number from Jenkins
+         * Second, the 'latest' tag.
+         * Pushing multiple tags is cheap, as all the layers are reused. */
+        docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+            app.push("0.0.${env.BUILD_NUMBER}")
+            app.push("latest")
         }
-        success {
-            echo 'I succeeeded!'
-        }
-        unstable {
-            echo 'I am unstable :/'
-        }
-        failure {
-            echo 'I failed :('
-        }
-        changed {
-            echo 'Things were different before...'
-        }
+    }
+
+    stage('Deploy - Dev') {
+        sh 'echo "Deployed to Dev"'
     }
 }
