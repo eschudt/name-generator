@@ -9,7 +9,7 @@ ARG BUILDSTAMP
 WORKDIR /go/src/github.com/eschudt/${PROJECT}
 COPY . /go/src/github.com/eschudt/${PROJECT}/
 
-RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh && dep ensure && make build-local
+RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh && make build-local
 
 FROM alpine:3.7
 RUN apk update && apk add --no-cache ca-certificates
