@@ -3,9 +3,8 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'apk update && apk add --no-cache git make'
-                sh 'wget -N https://raw.githubusercontent.com/golang/dep/master/install.sh'
-                sh './install.sh'
+                sh 'apk update && apk add --no-cache git make curl'
+                sh 'curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh'
                 sh 'mkdir -p /go/src/github.com/eschudt/name-generator'
                 sh 'cp -r * /go/src/github.com/eschudt/name-generator/'
                 sh 'export GOPATH=/go'
