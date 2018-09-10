@@ -18,10 +18,6 @@ run:
 	docker run -it --rm -p 8080:8080 --name app eschudt/${PROJECT}:${APP_VERSION}
 
 test: *.go
-	ls -l
-	pwd
 	/go/bin/dep ensure
-	ls -l
-	pwd
 	go fmt ./...
 	go test -vet all ./...
