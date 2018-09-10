@@ -6,10 +6,10 @@ node {
     }
 
     stage('Test and Build image') {
-        sh 'mkdir -p /root/go/bin'
-        sh 'curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh'
-        sh '/root/go/bin/dep ensure'
-        sh 'make test'
+        sh 'mkdir -p /go/src/github.com/eschudt/name-generator'
+        sh 'cp -r * /go/src/github.com/eschudt/name-generator/'
+        sh 'cd /go/src/github.com/eschudt/name-generator/ && dep ensure'
+        sh 'cd /go/src/github.com/eschudt/name-generator/ && make test'
         app = docker.build("eschudt/name-generator")
     }
 
