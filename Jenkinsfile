@@ -10,8 +10,8 @@ pipeline {
                 sh './install.sh'
                 sh 'mkdir -p /go/src/github.com/eschudt/name-generator'
                 sh 'cp -r * /go/src/github.com/eschudt/name-generator/'
-                sh 'ln -s $WORKSPACE /go/src/github.com/eschudt/name-generator/'
-                sh 'dep ensure'
+                sh 'export GOPATH=/go'
+                sh 'cd /go/src/github.com/eschudt/name-generator/ && dep ensure'
             }
         }
         stage('Test') {
