@@ -6,6 +6,7 @@ node {
     }
 
     stage('Test and Build image') {
+        sh 'curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh'
         sh 'dep ensure'
         sh 'make test'
         app = docker.build("eschudt/name-generator")
