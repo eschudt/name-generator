@@ -3,20 +3,18 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'go version'
-                sh 'pwd'
-                sh 'ls -l'
                 sh 'apk update && apk add --no-cache git make'
-                sh './install.sh'
+                sh 'apt-get install build-essential'
                 sh 'mkdir -p /go/src/github.com/eschudt/name-generator'
                 sh 'cp -r * /go/src/github.com/eschudt/name-generator/'
                 sh 'export GOPATH=/go'
                 sh 'cd /go/src/github.com/eschudt/name-generator/ && dep ensure'
             }
         }
-        stage('Test') {
+        stage('Test and Push') {
             steps {
-                sh 'cd /go/src/github.com/eschudt/name-generator/ && make test'
+                sh 'cd /go/src/github.com/eschudt/name-generator/ && make test && make build'
+                sh 'docker push eschudt/name-generator'
             }
         }
         stage('Deploy - Dev') {
@@ -26,7 +24,7 @@ pipeline {
         }
         stage('Sanity check') {
             steps {
-                input "Does the Dev environment look ok?"
+                input "Deploy to production?"
             }
         }
         stage('Deploy - Production') {
