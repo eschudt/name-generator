@@ -3,12 +3,13 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'apk update && apk add --no-cache git make curl'
+                sh 'apk update && apk add --no-cache git make curl docker'
                 sh 'curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh'
                 sh 'mkdir -p /go/src/github.com/eschudt/name-generator'
                 sh 'cp -r * /go/src/github.com/eschudt/name-generator/'
                 sh 'export GOPATH=/go'
                 sh 'cd /go/src/github.com/eschudt/name-generator/ && dep ensure'
+                sh 'service docker start'
             }
         }
         stage('Test and Push') {
