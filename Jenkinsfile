@@ -4,7 +4,8 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'apk update && apk add --no-cache git make'
-                sh 'apt-get install build-essential'
+                sh 'wget -q https://raw.githubusercontent.com/golang/dep/master/install.sh'
+                sh './install.sh'
                 sh 'mkdir -p /go/src/github.com/eschudt/name-generator'
                 sh 'cp -r * /go/src/github.com/eschudt/name-generator/'
                 sh 'export GOPATH=/go'
