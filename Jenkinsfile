@@ -9,7 +9,7 @@ pipeline {
                 sh 'cp -r * /go/src/github.com/eschudt/name-generator/'
                 sh 'export GOPATH=/go'
                 sh 'cd /go/src/github.com/eschudt/name-generator/ && dep ensure'
-                sh 'rc-service start docker'
+                sh 'rc-service docker start'
             }
         }
         stage('Test and Push') {
