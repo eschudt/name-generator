@@ -6,7 +6,7 @@ node {
     }
 
     stage('Test and Build image') {
-        sh 'apt-get install golang-go'
+        sh 'export GOPATH=/go'
         sh 'curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh'
         sh 'dep ensure'
         sh 'make test'
