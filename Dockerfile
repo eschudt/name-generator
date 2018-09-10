@@ -9,6 +9,8 @@ ARG BUILDSTAMP
 WORKDIR /go/src/github.com/eschudt/${PROJECT}
 COPY . /go/src/github.com/eschudt/${PROJECT}/
 
+
+RUN dep ensure
 RUN make build-local
 
 FROM alpine:3.7
