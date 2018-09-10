@@ -19,5 +19,6 @@ run:
 
 test: *.go
 	/go/bin/dep ensure
+	ls -l
 	go fmt ./...
 	go test -vet all ./...
