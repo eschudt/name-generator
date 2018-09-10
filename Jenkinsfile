@@ -8,6 +8,7 @@ node {
     stage('Test and Build image') {
         sh 'mkdir -p /go/src/github.com/eschudt/name-generator'
         sh 'cp -r * /go/src/github.com/eschudt/name-generator/'
+        sh 'go env'
         sh 'cd /go/src/github.com/eschudt/name-generator/ && /go/bin/dep ensure'
         sh 'cd /go/src/github.com/eschudt/name-generator/ && make test'
         app = docker.build("eschudt/name-generator")
