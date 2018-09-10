@@ -1,5 +1,5 @@
 FROM golang:1.10-alpine as builder
-RUN apk update && apk add --no-cache git make
+RUN apk update && apk add --no-cache git make curl
 
 ARG PROJECT
 ARG APP_VERSION
@@ -9,7 +9,7 @@ ARG BUILDSTAMP
 WORKDIR /go/src/github.com/eschudt/${PROJECT}
 COPY . /go/src/github.com/eschudt/${PROJECT}/
 
-
+RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 RUN dep ensure
 RUN make build-local
 
