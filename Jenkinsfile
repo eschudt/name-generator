@@ -10,7 +10,9 @@ node {
         sh 'cp -r * /root/go/src/github.com/eschudt/name-generator/'
         sh 'cd /root/go/src/github.com/eschudt/name-generator/ && /go/bin/dep ensure'
         sh 'cd /root/go/src/github.com/eschudt/name-generator/ && make test'
-        app = docker.build("/root/go/src/github.com/eschudt/name-generator")
+        dir ('/root/go/src/github.com/eschudt/name-generator/') {
+            app = docker.build("eschudt/name-generator")
+        }
     }
 
     stage('Integration Test') {
