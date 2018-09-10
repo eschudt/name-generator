@@ -16,7 +16,7 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh 'make test'
+                sh 'cd /go/src/github.com/eschudt/name-generator/ && make test'
             }
         }
         stage('Deploy - Dev') {
