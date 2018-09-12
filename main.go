@@ -21,7 +21,8 @@ type Name struct {
 }
 
 type Age struct {
-	Age int
+	Age      int
+	YearBorn int
 }
 
 type NameAge struct {
