@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -33,6 +34,7 @@ var (
 		Timeout: time.Second * 10,
 	}
 	ageServiceUrl string
+	logger        *log.Logger
 )
 
 func main() {
@@ -42,6 +44,8 @@ func main() {
 	netClient = &http.Client{
 		Timeout: time.Second * 10,
 	}
+
+	logger = log.New(os.Stderr, "", 0)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", helloHandler)
@@ -56,7 +60,7 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	resp, err := json.Marshal(data)
 	if err != nil {
-		panic(err)
+		logger.Fatal(err)
 	}
 	w.Write(resp)
 }
@@ -67,7 +71,7 @@ func nameHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	resp, err := json.Marshal(data)
 	if err != nil {
-		panic(err)
+		logger.Fatal(err)
 	}
 	w.Write(resp)
 }
@@ -75,17 +79,23 @@ func nameHandler(w http.ResponseWriter, r *http.Request) {
 func nameageHandler(w http.ResponseWriter, r *http.Request) {
 	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/age", ageServiceUrl), nil)
 	if err != nil {
-		fmt.Printf("Creating request error: %s", err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		logger.Fatal(fmt.Printf("Creating request error: %s", err.Error()))
+		return
 	}
 	result, err := netClient.Do(req)
 	if err != nil {
-		fmt.Printf("Do request error: %s", err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		logger.Fatal(fmt.Printf("Do request error: %s", err.Error()))
+		return
 	}
 
 	var actual Age
 	bodyBytes, err := ioutil.ReadAll(result.Body)
 	if err != nil {
-		fmt.Printf("Read body error: %s", err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		logger.Fatal(fmt.Printf("Read body error: %s", err.Error()))
+		return
 	}
 	json.Unmarshal(bodyBytes, &actual)
 
@@ -100,7 +110,9 @@ func nameageHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	resp, err := json.Marshal(data)
 	if err != nil {
-		panic(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		logger.Fatal(err)
+		return
 	}
 	w.Write(resp)
 }
