@@ -87,7 +87,8 @@ func nameageHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		logger.Fatal(fmt.Printf("Do request error: %s", err.Error()))
-		w.Write(fmt.Printf("Do request error: %s", err.Error()))
+		output := fmt.Sprintf("Do request error: %s", err.Error())
+		w.Write([]byte(output))
 		return
 	}
 
