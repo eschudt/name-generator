@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"os"
 	"time"
-
-	"github.com/eschudt/name-generator/client"
 )
 
 type Hello struct {
@@ -34,13 +32,16 @@ var (
 	netClient = &http.Client{
 		Timeout: time.Second * 10,
 	}
-	consulClient *client.ConsulClient
+	ageServiceUrl string
 )
 
 func main() {
-	url := os.Getenv("CONSUL_HTTP_ADDR")
+	ageServiceUrl = os.Getenv("AGE_SERVICE_URL")
 	listenPort := os.Getenv("NOMAD_PORT_http")
-	consulClient = client.NewConsulClient(url, "")
+
+	netClient = &http.Client{
+		Timeout: time.Second * 10,
+	}
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", helloHandler)
@@ -72,40 +73,34 @@ func nameHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func nameageHandler(w http.ResponseWriter, r *http.Request) {
-	address, port, err := consulClient.GetBaseURL("age-generator")
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/age", ageServiceUrl), nil)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-	} else {
-		req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s:%d/age", address, port), nil)
-		if err != nil {
-			fmt.Printf("Creating request error: %s", err.Error())
-		}
-		result, err := netClient.Do(req)
-		if err != nil {
-			fmt.Printf("Do request error: %s", err.Error())
-		}
-
-		var actual Age
-		bodyBytes, err := ioutil.ReadAll(result.Body)
-		if err != nil {
-			fmt.Printf("Read body error: %s", err.Error())
-		}
-		json.Unmarshal(bodyBytes, &actual)
-
-		data := NameAge{
-			Name: Name{
-				FirstName: "John",
-				LastName:  "Smith",
-			},
-			Age: actual,
-		}
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		resp, err := json.Marshal(data)
-		if err != nil {
-			panic(err)
-		}
-		w.Write(resp)
+		fmt.Printf("Creating request error: %s", err.Error())
 	}
+	result, err := netClient.Do(req)
+	if err != nil {
+		fmt.Printf("Do request error: %s", err.Error())
+	}
+
+	var actual Age
+	bodyBytes, err := ioutil.ReadAll(result.Body)
+	if err != nil {
+		fmt.Printf("Read body error: %s", err.Error())
+	}
+	json.Unmarshal(bodyBytes, &actual)
+
+	data := NameAge{
+		Name: Name{
+			FirstName: "John",
+			LastName:  "Smith",
+		},
+		Age: actual,
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	resp, err := json.Marshal(data)
+	if err != nil {
+		panic(err)
+	}
+	w.Write(resp)
 }
