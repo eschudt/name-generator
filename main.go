@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/eschudt/jwt-auth/verifier"
 )
 
 type Hello struct {
@@ -35,6 +37,7 @@ var (
 	}
 	ageServiceUrl string
 	logger        *log.Logger
+	verifyService *verifier.Service
 )
 
 func main() {
@@ -44,6 +47,8 @@ func main() {
 	netClient = &http.Client{
 		Timeout: time.Second * 10,
 	}
+
+	verifyService = verifier.New()
 
 	logger = log.New(os.Stderr, "", 0)
 
@@ -77,6 +82,15 @@ func nameHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func nameageHandler(w http.ResponseWriter, r *http.Request) {
+	token := r.Header.Get("Authorization")
+	requesterDetails := verifyService.Verify(token)
+
+	if requesterDetails.AccountID == "" {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/age", ageServiceUrl), nil)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

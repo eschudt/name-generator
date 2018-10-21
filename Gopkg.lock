@@ -2,6 +2,18 @@
 
 
 [[projects]]
+  name = "github.com/dgrijalva/jwt-go"
+  packages = ["."]
+  revision = "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e"
+  version = "v3.2.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/eschudt/jwt-auth"
+  packages = ["verifier"]
+  revision = "5a4b1fc1f4dfba09ba1064e2aa3471fc43c740b1"
+
+[[projects]]
   name = "github.com/hashicorp/consul"
   packages = ["api"]
   revision = "39f93f011e591c842acc8053a7f5972aa6e592fd"
@@ -40,6 +52,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "20404ef36272d8b12c7ca1f39c18632ff714fd35199e2a6b9401442e55929a5e"
+  inputs-digest = "60d9efa0c0dc4cc0a27ee7d31e11da698032b1101c3a870abd7b1f4ca0361691"
   solver-name = "gps-cdcl"
   solver-version = 1
